@@ -11,7 +11,7 @@ import (
 )
 
 // 题目一
-type students struct {
+type Students struct {
 	gorm.Model
 	Name  string
 	Age   int
@@ -29,37 +29,37 @@ func getConnect() *gorm.DB {
 
 func createTable() {
 	db := getConnect()
-	var students students
+	var students Students
 	db.AutoMigrate(&students)
 }
 
-func insertData(s *students) {
+func insertData(s *Students) {
 	db := getConnect()
 	db.Create(s)
 }
 
-func selectData(s *students) {
+func selectData(s *Students) {
 	db := getConnect()
 	db.Debug().Where("age > 18").Find(&s)
 }
 
-func updateData(s *students) {
+func updateData(s *Students) {
 	db := getConnect()
 	db.Debug().Model(s).Where("name = ?", "张三").Update("grade", "四年级")
 }
 
-func deleteData(s *students) {
+func deleteData(s *Students) {
 	db := getConnect()
 	db.Debug().Where("age < ?", 15).Delete(s)
 }
 
 // 题目二
-type account struct {
+type Account struct {
 	gorm.Model
 	Balance int
 }
 
-type transaction struct {
+type Transaction struct {
 	gorm.Model
 	FromAccountID uint
 	ToAccountID   uint
@@ -70,8 +70,8 @@ func transferAmountMethod(fromId uint, toId uint, amount int, tx *gorm.DB) error
 	if amount <= 0 {
 		return errors.New("amount must be greater than zero")
 	}
-	accountA := &account{}
-	accountB := &account{}
+	accountA := &Account{}
+	accountB := &Account{}
 	//加锁查询账户信息
 	tx.Debug().Clauses(clause.Locking{Strength: "UPDATE"}).Find(accountA, "id = ? ", fromId)
 	tx.Debug().Clauses(clause.Locking{Strength: "UPDATE"}).Find(accountB, "id = ? ", toId)
@@ -83,7 +83,7 @@ func transferAmountMethod(fromId uint, toId uint, amount int, tx *gorm.DB) error
 	accountB.Balance += amount
 	tx.Debug().Model(accountB).Update("balance", accountB.Balance)
 	//记录交易流水
-	transaction := &transaction{
+	transaction := &Transaction{
 		FromAccountID: fromId,
 		ToAccountID:   toId,
 		Amount:        amount,
