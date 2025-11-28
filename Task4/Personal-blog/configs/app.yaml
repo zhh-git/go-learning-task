@@ -1,0 +1,20 @@
+app:
+  name: "personal_blog"  # 应用名称
+  env: "dev"  # 环境（dev/test/prod）
+  port: 8080  # 服务端口
+  jwt:
+    secret: "your-secret-key-32bytes-long-123456" # 密钥（生产环境建议通过环境变量注入）
+    expires_at: 3600 # Token 有效期（秒），默认 1 小时
+    issuer: "personal_blog" # 签发者
+
+database:
+  driver: "mysql"
+  dsn: "root:root@tcp(127.0.0.1:3306)/personal_blog_db?charset=utf8mb4&parseTime=True&loc=Local"
+  max_open_conns: 100
+  max_idle_conns: 20
+  conn_max_lifetime: 3600  # 连接最大生命周期（秒）
+
+logger:
+  level: "info"  # 日志级别（debug/info/warn/error）
+  path: "./logs/" # 日志存储路径
+  filename: "app.log"
